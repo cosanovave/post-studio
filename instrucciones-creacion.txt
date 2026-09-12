@@ -1,0 +1,84 @@
+Quiero que construyas una aplicación web llamada "Post Studio", un editor visual para crear publicaciones de Instagram (formato feed 1080x1350 y 1080x1080, y opcionalmente stories 1080x1920), replicando la arquitectura y los principios de una herramienta de referencia que ya usamos ("Bio Studio"). Debe ser un editor tipo canvas, 100% en el navegador, con panel lateral de propiedades y exportación final en imagen/código.
+
+1. Estructura general de la interfaz
+Barra superior con pestañas: Fondo, Módulos, Sección, Exportar, Texto/Caption (reemplaza a "Social").
+Un selector arriba a la derecha tipo "— Modelo —" pero llamado "— Plantilla / Perfil de marca —", para poder guardar y cambiar entre distintos perfiles de estilo (por ejemplo, distintas cuentas o líneas de contenido).
+Iconos de acción rápida: vista previa (ojo), descargar, duplicar plantilla, y un botón para abrir/cerrar el panel lateral.
+Canvas central que muestra el post en proporción real (selector de formato: 4:5, 1:1, 9:16).
+2. Origen de los assets (para que la librería no empiece vacía)
+
+La herramienta debe llegar con una librería inicial ya poblada, combinando estas fuentes (así el usuario solo selecciona y arma, sin salir a buscar nada):
+
+Fondos generados por código (base, sin dependencias externas): una colección inicial de gradientes, patrones geométricos y texturas creadas con CSS/SVG puro, agrupados por cada "pack de estilo" (ver sección 3). Estos no dependen de licencias ni de conexión a internet y deben ser la base por defecto.
+Banco de imágenes libres de derechos vía API (Unsplash y/o Pexels): un buscador integrado dentro de la pestaña "Fondo" y dentro de "Módulos → Galería", que consulta la API y trae fotos para usar como fondo o contenido, con atribución automática cuando la licencia lo requiera. Usa variables de entorno para las API keys (UNSPLASH_ACCESS_KEY / PEXELS_API_KEY) y cachea resultados para no exceder el rate limit.
+Imágenes propias del usuario: botón "Subir imagen" (igual que en Bio Studio) que sube el archivo a un storage/CDN propio y lo agrega a una sección "Mis imágenes" dentro de la librería, disponible en todos los posts futuros.
+Generación de imágenes con IA: un campo de texto ("Describe la imagen que quieres") dentro de "Fondo" y "Módulos", que llama a una API de generación de imágenes (por ejemplo la API de imágenes de OpenAI o Stability AI) y agrega el resultado directo a la librería del usuario como una imagen propia más. Debe mostrar costo/créditos si la API lo requiere, y dejar la key configurable por variable de entorno.
+
+Toda imagen que entra a la librería (subida, generada o traída de un banco) debe quedar indexada con: origen (CSS / Unsplash / Pexels / propia / IA), miniatura, y fecha, para poder filtrarla después igual que los módulos.
+
+3. Pestaña "Fondo"
+Fondo principal configurable por color sólido, gradiente/patrón generado, o imagen (subida, de banco, o generada — ver sección 2).
+Control de "espaciado interno" entre bloques de contenido (Nada / Compacto / Normal / Amplio), igual que el control de espaciado entre secciones del bio.
+Packs de estilo predefinidos (mínimo 4, ampliable), cada uno con nombre, descripción corta, y su propio set de fondos generados por CSS de la sección 2:
+Soft — tonos pastel, bordes suaves, sombras delicadas.
+Neon — colores eléctricos, efecto glow, tipografía tech.
+Luxury — dorado, serif elegante, fondo oscuro premium.
+Grunge — texturas crudas, contornos marcados, actitud rebelde.
+Cada pack debe definir automáticamente: paleta de colores, tipografía (ver sección 8), estilo de bordes/sombras, y una galería de 6-8 fondos generados listos para elegir, aplicados a todos los módulos del post.
+4. Pestaña "Módulos" (bloques de contenido reutilizables)
+Un formulario para crear módulos personalizados con: nombre del módulo, descripción corta, y un campo para pegar HTML inline (texto, listas, párrafos, imágenes) que se renderiza directo en el canvas.
+Botón para subir un asset (imagen) a un almacenamiento/CDN y insertarlo en el módulo, o traerlo del banco de imágenes / generarlo con IA (mismo picker de la sección 2).
+Botón "Guardar módulo" que lo agrega a una librería personal reutilizable entre distintos posts.
+Librería de módulos organizada por categorías con filtros tipo chip, adaptadas a Instagram, por ejemplo:
+Títulos / Headlines
+Frases / Quotes
+Galería (grilla de fotos, collage, carrusel)
+Precio / Oferta
+Call to action (CTA)
+Redes / Handle
+Badges o etiquetas ("Nuevo", "Disponible ahora", etc.)
+Cada módulo de la librería muestra: ícono, nombre, categoría y descripción corta, igual que las tarjetas verdes del bio. La app debe venir precargada con al menos 2-3 módulos de ejemplo por categoría, listos para usar desde el primer momento.
+5. Pestaña "Sección"
+Permite agregar, reordenar (drag & drop) y eliminar secciones/bloques dentro del post (por ejemplo: encabezado, imagen principal, texto, footer con handle de Instagram).
+Cada sección puede tener su propio fondo, padding y alineación, independiente del fondo general.
+6. Pestaña "Texto / Caption" (reemplaza la pestaña "Social" del bio)
+Panel para escribir el caption del post (texto que va en la descripción de Instagram, no en la imagen).
+Campo de hashtags sugeridos, con contador de caracteres.
+Toggle para mostrar/ocultar un bloque de handle de Instagram (@usuario) superpuesto en el diseño, con control de alineación (izquierda / centro / derecha), igual que la "alineación de íconos" del bio.
+Opcional: campos para otras redes (TikTok, X) si el post las menciona, con checkbox de activación por fila, igual que el patrón "activar fila" del bio.
+7. Pestaña "Exportar"
+
+Debe ofrecer las mismas capacidades que el bio, adaptadas a imagen de post:
+
+PNG HQ (alta resolución, lista para subir a Instagram).
+PNG liviano (para previsualización o compartir rápido).
+Subir imagen a CDN (para obtener una URL pública).
+Generar código HTML completo del diseño (con estilos inline, tipo el patrón "CBHours": cada sección con su propio markup y estilos embebidos, imágenes como <img> dentro de la estructura).
+Descargar .html del diseño.
+Copiar caption + hashtags al portapapeles en un solo clic.
+"Mi plantilla favorita": campo de nombre + botón "Guardar" para guardar la plantilla actual (fondo, módulos, textos) y poder reutilizarla en próximos posts.
+"Aplicar branding en 1 clic": botón que reaplica automáticamente la paleta, tipografía y logo/marca guardados del perfil activo a todo el post actual.
+8. Tipografías e iconos
+Google Fonts como base de tipografías: cada pack de estilo (sección 3) debe traer 1-2 combinaciones de fuentes (título + texto) precargadas desde Google Fonts, seleccionables desde un dropdown con vista previa en vivo.
+Librería de iconos (Lucide o Font Awesome) para badges, bullets y CTAs, integrada como set de iconos vectoriales seleccionables dentro de los módulos, coherente en estilo entre todos los packs.
+Tipografías propias: opción para subir archivos de fuente (.ttf/.woff/.woff2) de marca y que queden disponibles como una opción más junto a las de Google Fonts, guardadas en el perfil del usuario.
+9. Principios de diseño y comportamiento que debe conservar
+Todo se edita visualmente en vivo: cualquier cambio en los paneles laterales se refleja de inmediato en el canvas central, sin recargar.
+Reutilización por librería: los módulos, fondos, imágenes y plantillas se guardan y quedan disponibles para futuros posts, no se pierden al cerrar.
+Nunca partir de cero: la librería (fondos, módulos, tipografías) viene precargada de fábrica combinando lo generado por código, el banco de imágenes y ejemplos, para que el flujo real del usuario sea "seleccionar y armar", no "crear desde cero" cada vez.
+Consistencia de marca: los "packs de estilo" y "aplicar branding en 1 clic" existen para que todos los posts de un mismo perfil se vean coherentes entre sí.
+Exportación flexible: el usuario siempre puede sacar tanto la imagen final (PNG) como el código fuente (HTML) del diseño, para máxima portabilidad.
+Panel lateral contextual: cada pestaña de la barra superior abre un panel lateral distinto y específico a esa función (fondo, módulos, secciones, exportar, texto), nunca se mezclan controles de distintas pestañas en un mismo panel.
+Multi-perfil: como el selector de "Modelo" en el bio, debe soportar múltiples perfiles/plantillas de marca guardados, para usuarios que manejan más de una cuenta o línea de contenido.
+10. Stack sugerido
+
+Usa el stack que consideres más simple y mantenible para una app 100% frontend (por ejemplo React + Tailwind + canvas HTML renderizado a imagen con una librería como html-to-image o html2canvas para la exportación PNG). Si hace falta backend para guardar librerías de módulos/plantillas, subir imágenes a un CDN, y llamar a las APIs de Unsplash/Pexels/generación de IA (para no exponer las keys en el frontend), propone la solución más simple (por ejemplo Supabase + funciones serverless, o un backend ligero con almacenamiento de objetos).
+
+Antes de escribir código, hazme un resumen breve de la arquitectura de componentes que vas a crear y del modelo de datos (assets, módulos, secciones, plantillas, perfiles) para que lo valide antes de que implementes todo.
+
+Notas para ti (no incluir en el prompt a Claude Code)
+Elegiste combinar las 4 fuentes de assets (CSS generado, Unsplash/Pexels, imágenes propias, generación con IA) y las 3 fuentes de tipografía/iconos (Google Fonts, librería de iconos, fuentes propias) — ya quedaron integradas en las secciones 2 y 8 del prompt.
+Para Unsplash/Pexels y para el generador de imágenes con IA vas a necesitar API keys propias (son servicios de terceros); Claude Code te va a pedir dónde guardarlas como variables de entorno, no las compartas en el chat ni las pegues directo en el código.
+Personalicé las categorías de módulos y la pestaña "Social → Texto/Caption" porque en Instagram no aplican enlaces tipo OnlyFans/Lovense; si tu caso de uso sí necesita esos enlaces (por ejemplo, un post que dirige a un link en bio), puedes agregar de vuelta una sección de "Enlaces" similar a la del bio.
+Si quieres que el editor también soporte Stories (9:16) con capas separadas del feed, dilo explícitamente en el prompt: agregar formatos multiplica el trabajo de layout.
+Si Claude Code te pregunta por integraciones (subida directa a Instagram vía API, programación de publicación, etc.), ten en cuenta que eso requiere la API oficial de Meta con permisos de negocio — es un paso aparte del editor visual en sí.
