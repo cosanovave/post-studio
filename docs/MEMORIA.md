@@ -71,7 +71,16 @@ Google Fonts (por pack), librería de iconos (Lucide o Font Awesome), fuentes pr
 - Panel lateral contextual (nunca mezclar controles de distintas pestañas)
 - Multi-perfil
 
+## Progreso de implementación (2026-09-12)
+- Frontend scaffolded en `frontend/` con Vite + React + TypeScript + Tailwind v4 (@tailwindcss/vite)
+- Dependencias: zustand (persist en localStorage), lucide-react (iconos), html-to-image (export PNG)
+- Estructura: `src/types`, `src/data` (packs de estilo + fondos CSS generados + módulos de ejemplo precargados), `src/store/useEditorStore.ts`, `src/components/{TopBar,Canvas,SidePanel/panels}`, `src/lib/{formatos,exportar}.ts`
+- Funcional: TopBar con 5 pestañas + selector de formato (4:5/1:1/story/reel/carrusel) + selector de perfil; Canvas con render en vivo de secciones/módulos y pack de estilo aplicado; 5 paneles laterales contextuales (Fondo, Módulos, Sección, Exportar, Caption); export real de PNG HQ/liviano y .html vía html-to-image; copiar caption+hashtags
+- Pendiente de conectar aún: buscador Unsplash/Pexels (requiere backend), generación de imágenes IA (placeholder), subida de imágenes propias/CDN, selección real de pack de estilo y fondo desde el panel (UI lista, falta conectar al store), drag&drop de secciones, soporte real de video (reels)
+- `npm run dev` corriendo en http://localhost:5173 para pruebas locales
+
 ## Próximos pasos
-1. Presentar al usuario resumen de arquitectura de componentes + modelo de datos para validación (paso obligatorio antes de codear, según instrucción original)
-2. Tras aprobación, definir estructura de carpetas de `src/`
-3. Implementar
+1. Conectar selección de pack de estilo / fondo / módulo a insertar en sección (falta wiring de clicks del panel al store)
+2. Backend ligero: proxy de Unsplash/Pexels, subida de imágenes propias, y (más adelante) procesamiento de video con FFmpeg para Reels
+3. Soporte de video real en Canvas y Asset (tipo "video")
+4. Drag & drop de secciones
