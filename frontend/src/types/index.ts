@@ -84,9 +84,12 @@ export interface Proyecto {
   perfilId: string;
   slides: Slide[];
   videoAssetId?: string;
+  fondoSeleccionadoId?: string;
+  espaciadoInterno?: "nada" | "compacto" | "normal" | "amplio";
   caption: string;
   hashtags: string[];
   handleInstagram?: string;
+  mostrarHandle?: boolean;
   handleAlineacion?: Alineacion;
   fechaActualizacion: string;
 }

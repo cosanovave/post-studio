@@ -32,13 +32,23 @@ interface EditorState {
   togglePanel: () => void;
   setFormato: (formato: FormatoId) => void;
   setPerfilActivo: (perfilId: string) => void;
+  setPackEstiloDelPerfil: (packId: string) => void;
+  setFondoSeleccionado: (fondoId: string) => void;
+  setEspaciadoInterno: (
+    espaciado: "nada" | "compacto" | "normal" | "amplio",
+  ) => void;
   agregarAsset: (asset: Asset) => void;
   agregarModulo: (modulo: Modulo) => void;
   agregarSeccion: (seccion: Seccion) => void;
+  agregarModuloASeccion: (moduloId: string, seccionId?: string) => void;
   reordenarSecciones: (seccionesIds: string[]) => void;
   eliminarSeccion: (seccionId: string) => void;
+  actualizarSeccion: (seccionId: string, cambios: Partial<Seccion>) => void;
   actualizarCaption: (caption: string) => void;
   actualizarHashtags: (hashtags: string[]) => void;
+  setMostrarHandle: (mostrar: boolean) => void;
+  setHandleAlineacion: (alineacion: Proyecto["handleAlineacion"]) => void;
+  setHandleInstagram: (handle: string) => void;
 }
 
 const perfilDefault: Perfil = {
@@ -58,6 +68,7 @@ const proyectoDefault: Proyecto = {
   slides: [{ id: "slide-1", orden: 0, seccionesIds: [] }],
   caption: "",
   hashtags: [],
+  mostrarHandle: true,
   handleAlineacion: "centro",
   fechaActualizacion: new Date().toISOString(),
 };
@@ -86,12 +97,59 @@ export const useEditorStore = create<EditorState>()(
           proyectoActual: { ...s.proyectoActual, formato },
         })),
       setPerfilActivo: (perfilId) => set({ perfilActivoId: perfilId }),
+      setPackEstiloDelPerfil: (packId) =>
+        set((s) => ({
+          perfiles: s.perfiles.map((p) =>
+            p.id === s.perfilActivoId ? { ...p, packEstiloId: packId } : p,
+          ),
+          proyectoActual: { ...s.proyectoActual, fondoSeleccionadoId: undefined },
+        })),
+      setFondoSeleccionado: (fondoId) =>
+        set((s) => ({
+          proyectoActual: { ...s.proyectoActual, fondoSeleccionadoId: fondoId },
+        })),
+      setEspaciadoInterno: (espaciado) =>
+        set((s) => ({
+          proyectoActual: { ...s.proyectoActual, espaciadoInterno: espaciado },
+        })),
       agregarAsset: (asset) =>
         set((s) => ({ assets: [asset, ...s.assets] })),
       agregarModulo: (modulo) =>
         set((s) => ({ modulos: [modulo, ...s.modulos] })),
       agregarSeccion: (seccion) =>
         set((s) => ({ secciones: [...s.secciones, seccion] })),
+      agregarModuloASeccion: (moduloId, seccionId) =>
+        set((s) => {
+          let secciones = s.secciones;
+          let destinoId = seccionId;
+
+          if (!destinoId) {
+            const ultima = [...secciones].sort((a, b) => a.orden - b.orden).at(-1);
+            if (ultima) {
+              destinoId = ultima.id;
+            } else {
+              destinoId = `sec-${Date.now()}`;
+              secciones = [
+                {
+                  id: destinoId,
+                  tipo: "bloque",
+                  orden: 0,
+                  padding: "normal",
+                  alineacion: "centro",
+                  modulosIds: [],
+                },
+              ];
+            }
+          }
+
+          return {
+            secciones: secciones.map((sec) =>
+              sec.id === destinoId
+                ? { ...sec, modulosIds: [...sec.modulosIds, moduloId] }
+                : sec,
+            ),
+          };
+        }),
       reordenarSecciones: (seccionesIds) =>
         set((s) => ({
           secciones: seccionesIds
@@ -105,6 +163,12 @@ export const useEditorStore = create<EditorState>()(
         set((s) => ({
           secciones: s.secciones.filter((sec) => sec.id !== seccionId),
         })),
+      actualizarSeccion: (seccionId, cambios) =>
+        set((s) => ({
+          secciones: s.secciones.map((sec) =>
+            sec.id === seccionId ? { ...sec, ...cambios } : sec,
+          ),
+        })),
       actualizarCaption: (caption) =>
         set((s) => ({
           proyectoActual: { ...s.proyectoActual, caption },
@@ -112,6 +176,21 @@ export const useEditorStore = create<EditorState>()(
       actualizarHashtags: (hashtags) =>
         set((s) => ({
           proyectoActual: { ...s.proyectoActual, hashtags },
+        })),
+      setMostrarHandle: (mostrar) =>
+        set((s) => ({
+          proyectoActual: { ...s.proyectoActual, mostrarHandle: mostrar },
+        })),
+      setHandleAlineacion: (alineacion) =>
+        set((s) => ({
+          proyectoActual: { ...s.proyectoActual, handleAlineacion: alineacion },
+        })),
+      setHandleInstagram: (handle) =>
+        set((s) => ({
+          proyectoActual: {
+            ...s.proyectoActual,
+            handleInstagram: handle.replace(/^@/, ""),
+          },
         })),
     }),
     { name: "post-studio-storage" },

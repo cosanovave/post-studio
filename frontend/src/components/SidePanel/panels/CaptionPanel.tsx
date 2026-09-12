@@ -4,6 +4,9 @@ export function CaptionPanel() {
   const proyectoActual = useEditorStore((s) => s.proyectoActual);
   const actualizarCaption = useEditorStore((s) => s.actualizarCaption);
   const actualizarHashtags = useEditorStore((s) => s.actualizarHashtags);
+  const setMostrarHandle = useEditorStore((s) => s.setMostrarHandle);
+  const setHandleAlineacion = useEditorStore((s) => s.setHandleAlineacion);
+  const setHandleInstagram = useEditorStore((s) => s.setHandleInstagram);
 
   return (
     <div className="flex flex-col gap-5 p-4 text-sm">
@@ -44,15 +47,30 @@ export function CaptionPanel() {
         <h3 className="mb-2 font-semibold text-neutral-800 dark:text-neutral-200">
           Handle de Instagram
         </h3>
+        <input
+          value={proyectoActual.handleInstagram ?? ""}
+          onChange={(e) => setHandleInstagram(e.target.value)}
+          placeholder="tu_usuario"
+          className="mb-2 w-full rounded-md border border-neutral-300 px-3 py-2 dark:border-neutral-700 dark:bg-neutral-900"
+        />
         <label className="mb-2 flex items-center gap-2">
-          <input type="checkbox" defaultChecked />
+          <input
+            type="checkbox"
+            checked={proyectoActual.mostrarHandle ?? true}
+            onChange={(e) => setMostrarHandle(e.target.checked)}
+          />
           Mostrar @usuario superpuesto en el diseño
         </label>
         <div className="flex gap-1">
-          {["izquierda", "centro", "derecha"].map((align) => (
+          {(["izquierda", "centro", "derecha"] as const).map((align) => (
             <button
               key={align}
-              className="flex-1 rounded-md border border-neutral-200 py-1 text-xs capitalize hover:bg-neutral-50 dark:border-neutral-700"
+              onClick={() => setHandleAlineacion(align)}
+              className={`flex-1 rounded-md border py-1 text-xs capitalize transition ${
+                proyectoActual.handleAlineacion === align
+                  ? "border-purple-500 bg-purple-50 dark:bg-purple-950"
+                  : "border-neutral-200 hover:bg-neutral-50 dark:border-neutral-700 dark:hover:bg-neutral-800"
+              }`}
             >
               {align}
             </button>

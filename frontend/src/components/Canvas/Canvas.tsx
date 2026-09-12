@@ -11,14 +11,26 @@ export function Canvas() {
   const perfiles = useEditorStore((s) => s.perfiles);
   const perfilActivoId = useEditorStore((s) => s.perfilActivoId);
   const packsEstilo = useEditorStore((s) => s.packsEstilo);
+  const proyectoActual = useEditorStore((s) => s.proyectoActual);
 
   const perfilActivo = perfiles.find((p) => p.id === perfilActivoId);
   const packActivo = packsEstilo.find((p) => p.id === perfilActivo?.packEstiloId);
   const { width, height } = dimensionesPorFormato[formato];
 
-  const fondoPrincipal = packActivo
-    ? fondosGenerados[packActivo.fondosGeneradosIds[0]]
+  const fondoIdActivo =
+    proyectoActual.fondoSeleccionadoId ?? packActivo?.fondosGeneradosIds[0];
+  const fondoPrincipal = fondoIdActivo
+    ? fondosGenerados[fondoIdActivo]
     : "#f5f5f5";
+
+  const paddingPorEspaciado: Record<string, number> = {
+    nada: 0,
+    compacto: 12,
+    normal: 24,
+    amplio: 48,
+  };
+  const paddingCanvas =
+    paddingPorEspaciado[proyectoActual.espaciadoInterno ?? "normal"];
 
   const seccionesOrdenadas = [...secciones].sort((a, b) => a.orden - b.orden);
 
@@ -32,8 +44,26 @@ export function Canvas() {
           height: height * ESCALA_PREVIEW,
           background: fondoPrincipal,
           fontFamily: packActivo?.tipografia.texto,
+          padding: paddingCanvas * ESCALA_PREVIEW,
+          boxSizing: "border-box",
         }}
       >
+        {proyectoActual.mostrarHandle && proyectoActual.handleInstagram && (
+          <div
+            className="absolute bottom-3 left-0 right-0 px-3 text-xs font-medium text-white/90"
+            style={{
+              textAlign:
+                proyectoActual.handleAlineacion === "izquierda"
+                  ? "left"
+                  : proyectoActual.handleAlineacion === "derecha"
+                    ? "right"
+                    : "center",
+            }}
+          >
+            @{proyectoActual.handleInstagram}
+          </div>
+        )}
+
         {seccionesOrdenadas.length === 0 && (
           <div className="flex h-full w-full flex-col items-center justify-center gap-2 text-center text-sm text-white/70">
             <p>Tu post está vacío</p>

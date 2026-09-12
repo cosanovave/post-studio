@@ -1,13 +1,26 @@
 import { useEditorStore } from "../../../store/useEditorStore";
 import { fondosGenerados } from "../../../data/packsEstilo";
 
+const OPCIONES_ESPACIADO = [
+  { id: "nada", label: "Nada" },
+  { id: "compacto", label: "Compacto" },
+  { id: "normal", label: "Normal" },
+  { id: "amplio", label: "Amplio" },
+] as const;
+
 export function FondoPanel() {
   const packsEstilo = useEditorStore((s) => s.packsEstilo);
   const perfiles = useEditorStore((s) => s.perfiles);
   const perfilActivoId = useEditorStore((s) => s.perfilActivoId);
+  const proyectoActual = useEditorStore((s) => s.proyectoActual);
+  const setPackEstiloDelPerfil = useEditorStore((s) => s.setPackEstiloDelPerfil);
+  const setFondoSeleccionado = useEditorStore((s) => s.setFondoSeleccionado);
+  const setEspaciadoInterno = useEditorStore((s) => s.setEspaciadoInterno);
 
   const perfilActivo = perfiles.find((p) => p.id === perfilActivoId);
   const packActivo = packsEstilo.find((p) => p.id === perfilActivo?.packEstiloId);
+  const fondoActivoId =
+    proyectoActual.fondoSeleccionadoId ?? packActivo?.fondosGeneradosIds[0];
 
   return (
     <div className="flex flex-col gap-5 p-4 text-sm">
@@ -19,6 +32,7 @@ export function FondoPanel() {
           {packsEstilo.map((pack) => (
             <button
               key={pack.id}
+              onClick={() => setPackEstiloDelPerfil(pack.id)}
               className={`rounded-lg border p-2 text-left transition ${
                 pack.id === packActivo?.id
                   ? "border-purple-500 ring-2 ring-purple-200"
@@ -44,7 +58,12 @@ export function FondoPanel() {
           {packActivo?.fondosGeneradosIds.map((fondoId) => (
             <button
               key={fondoId}
-              className="aspect-square rounded-md border border-neutral-200 dark:border-neutral-700"
+              onClick={() => setFondoSeleccionado(fondoId)}
+              className={`aspect-square rounded-md border-2 transition ${
+                fondoId === fondoActivoId
+                  ? "border-purple-500"
+                  : "border-neutral-200 dark:border-neutral-700"
+              }`}
               style={{ background: fondosGenerados[fondoId] }}
               title={fondoId}
             />
@@ -85,12 +104,17 @@ export function FondoPanel() {
           Espaciado interno
         </h3>
         <div className="flex gap-1">
-          {["Nada", "Compacto", "Normal", "Amplio"].map((opcion) => (
+          {OPCIONES_ESPACIADO.map((opcion) => (
             <button
-              key={opcion}
-              className="flex-1 rounded-md border border-neutral-200 py-1 text-xs hover:bg-neutral-50 dark:border-neutral-700 dark:hover:bg-neutral-800"
+              key={opcion.id}
+              onClick={() => setEspaciadoInterno(opcion.id)}
+              className={`flex-1 rounded-md border py-1 text-xs transition ${
+                (proyectoActual.espaciadoInterno ?? "normal") === opcion.id
+                  ? "border-purple-500 bg-purple-50 dark:bg-purple-950"
+                  : "border-neutral-200 hover:bg-neutral-50 dark:border-neutral-700 dark:hover:bg-neutral-800"
+              }`}
             >
-              {opcion}
+              {opcion.label}
             </button>
           ))}
         </div>

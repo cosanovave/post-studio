@@ -15,6 +15,7 @@ const CATEGORIAS: { id: CategoriaModulo; label: string }[] = [
 export function ModulosPanel() {
   const modulos = useEditorStore((s) => s.modulos);
   const agregarModulo = useEditorStore((s) => s.agregarModulo);
+  const agregarModuloASeccion = useEditorStore((s) => s.agregarModuloASeccion);
   const [filtro, setFiltro] = useState<CategoriaModulo | "todos">("todos");
   const [nombreNuevo, setNombreNuevo] = useState("");
   const [descripcionNueva, setDescripcionNueva] = useState("");
@@ -80,6 +81,9 @@ export function ModulosPanel() {
         <h3 className="mb-2 font-semibold text-neutral-800 dark:text-neutral-200">
           Librería de módulos
         </h3>
+        <p className="mb-2 text-xs text-neutral-400">
+          Haz clic en un módulo para insertarlo en el post.
+        </p>
         <div className="mb-2 flex flex-wrap gap-1">
           <button
             onClick={() => setFiltro("todos")}
@@ -110,6 +114,7 @@ export function ModulosPanel() {
           {modulosFiltrados.map((modulo) => (
             <button
               key={modulo.id}
+              onClick={() => agregarModuloASeccion(modulo.id)}
               className="rounded-lg border border-neutral-200 p-2 text-left hover:border-purple-300 dark:border-neutral-700"
             >
               <p className="font-medium">{modulo.nombre}</p>
