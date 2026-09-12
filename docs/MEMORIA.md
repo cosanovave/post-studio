@@ -81,8 +81,20 @@ Google Fonts (por pack), librería de iconos (Lucide o Font Awesome), fuentes pr
 - Pendiente de conectar aún: buscador Unsplash/Pexels (requiere backend), generación de imágenes IA (placeholder), subida de imágenes propias/CDN, selección real de pack de estilo y fondo desde el panel (UI lista, falta conectar al store), drag&drop de secciones, soporte real de video (reels)
 - `npm run dev` corriendo en http://localhost:5173 para pruebas locales
 
+## Backend (2026-09-12)
+- `backend/` — Node + Express + TypeScript (ESM, `tsx` para dev)
+- Rutas: `GET /api/banco-imagenes/unsplash|pexels?q=` (con cache en memoria 10 min), `POST /api/upload` (multer, guarda en `backend/uploads/`, servido como estático), `POST /api/generar-imagen` (placeholder: responde 503 si no hay OPENAI_API_KEY/STABILITY_API_KEY — de pago, no se implementó la llamada real aún)
+- `.env.example` documenta las variables: UNSPLASH_ACCESS_KEY, PEXELS_API_KEY (gratis), OPENAI_API_KEY/STABILITY_API_KEY (pago, opcional)
+- Frontend conectado a estas rutas vía `frontend/src/lib/api.ts` (usa `VITE_API_URL`, default `http://localhost:3001`)
+- FondoPanel ahora tiene buscador real de Unsplash/Pexels (resultados clicables aplican como fondo tipo imagen) y subida de imagen propia funcional
+- `Proyecto.fondoImagenUrl` nuevo campo — cuando está seteado tiene prioridad sobre el fondo CSS generado en el Canvas
+- Fix de contraste: `index.css` ahora define `body { color }` explícito para claro/oscuro (varios textos no tenían color explícito y se veían casi invisibles en modo oscuro)
+- Backend aún NO desplegado públicamente (solo corre en localhost:3001) — pendiente decidir hosting cuando se agregue FFmpeg para reels
+
 ## Próximos pasos
-1. Conectar selección de pack de estilo / fondo / módulo a insertar en sección (falta wiring de clicks del panel al store)
-2. Backend ligero: proxy de Unsplash/Pexels, subida de imágenes propias, y (más adelante) procesamiento de video con FFmpeg para Reels
-3. Soporte de video real en Canvas y Asset (tipo "video")
-4. Drag & drop de secciones
+1. Deploy público del backend (Render/Railway u otro) para que el buscador de imágenes funcione desde la versión publicada en GitHub Pages
+2. Conseguir y configurar UNSPLASH_ACCESS_KEY / PEXELS_API_KEY (gratis) como secrets
+3. Procesamiento de video con FFmpeg para Reels (backend)
+4. Soporte de video real en Canvas y Asset (tipo "video")
+5. Drag & drop de secciones
+6. Generación de imágenes con IA (de pago, activar cuando el usuario decida)

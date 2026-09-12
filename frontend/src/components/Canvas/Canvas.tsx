@@ -19,9 +19,11 @@ export function Canvas() {
 
   const fondoIdActivo =
     proyectoActual.fondoSeleccionadoId ?? packActivo?.fondosGeneradosIds[0];
-  const fondoPrincipal = fondoIdActivo
-    ? fondosGenerados[fondoIdActivo]
-    : "#f5f5f5";
+  const fondoPrincipal = proyectoActual.fondoImagenUrl
+    ? `url(${proyectoActual.fondoImagenUrl})`
+    : fondoIdActivo
+      ? fondosGenerados[fondoIdActivo]
+      : "#f5f5f5";
 
   const paddingPorEspaciado: Record<string, number> = {
     nada: 0,
@@ -43,6 +45,8 @@ export function Canvas() {
           width: width * ESCALA_PREVIEW,
           height: height * ESCALA_PREVIEW,
           background: fondoPrincipal,
+          backgroundSize: proyectoActual.fondoImagenUrl ? "cover" : undefined,
+          backgroundPosition: proyectoActual.fondoImagenUrl ? "center" : undefined,
           fontFamily: packActivo?.tipografia.texto,
           padding: paddingCanvas * ESCALA_PREVIEW,
           boxSizing: "border-box",

@@ -34,6 +34,7 @@ interface EditorState {
   setPerfilActivo: (perfilId: string) => void;
   setPackEstiloDelPerfil: (packId: string) => void;
   setFondoSeleccionado: (fondoId: string) => void;
+  setFondoImagen: (url: string) => void;
   setEspaciadoInterno: (
     espaciado: "nada" | "compacto" | "normal" | "amplio",
   ) => void;
@@ -106,7 +107,15 @@ export const useEditorStore = create<EditorState>()(
         })),
       setFondoSeleccionado: (fondoId) =>
         set((s) => ({
-          proyectoActual: { ...s.proyectoActual, fondoSeleccionadoId: fondoId },
+          proyectoActual: {
+            ...s.proyectoActual,
+            fondoSeleccionadoId: fondoId,
+            fondoImagenUrl: undefined,
+          },
+        })),
+      setFondoImagen: (url) =>
+        set((s) => ({
+          proyectoActual: { ...s.proyectoActual, fondoImagenUrl: url },
         })),
       setEspaciadoInterno: (espaciado) =>
         set((s) => ({

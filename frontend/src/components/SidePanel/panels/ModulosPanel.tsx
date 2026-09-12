@@ -65,7 +65,7 @@ export function ModulosPanel() {
             rows={3}
             className="rounded-md border border-neutral-300 px-3 py-2 font-mono text-xs dark:border-neutral-700 dark:bg-neutral-900"
           />
-          <button className="rounded-md border border-neutral-200 py-1.5 text-xs hover:bg-neutral-50 dark:border-neutral-700">
+          <button className="rounded-md border border-neutral-200 py-1.5 text-xs text-neutral-700 hover:bg-neutral-50 dark:border-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-800">
             Subir imagen / banco / IA
           </button>
           <button
@@ -90,7 +90,7 @@ export function ModulosPanel() {
             className={`rounded-full px-2.5 py-1 text-xs ${
               filtro === "todos"
                 ? "bg-purple-600 text-white"
-                : "bg-neutral-100 dark:bg-neutral-800"
+                : "bg-neutral-100 text-neutral-700 dark:bg-neutral-800 dark:text-neutral-300"
             }`}
           >
             Todos
@@ -102,7 +102,7 @@ export function ModulosPanel() {
               className={`rounded-full px-2.5 py-1 text-xs ${
                 filtro === cat.id
                   ? "bg-purple-600 text-white"
-                  : "bg-neutral-100 dark:bg-neutral-800"
+                  : "bg-neutral-100 text-neutral-700 dark:bg-neutral-800 dark:text-neutral-300"
               }`}
             >
               {cat.label}
@@ -115,11 +115,15 @@ export function ModulosPanel() {
             <button
               key={modulo.id}
               onClick={() => agregarModuloASeccion(modulo.id)}
-              className="rounded-lg border border-neutral-200 p-2 text-left hover:border-purple-300 dark:border-neutral-700"
+              className="rounded-lg border border-neutral-200 p-2 text-left hover:border-purple-300 dark:border-neutral-700 dark:hover:border-purple-500"
             >
-              <p className="font-medium">{modulo.nombre}</p>
-              <p className="text-xs text-neutral-500">{modulo.descripcion}</p>
-              <span className="mt-1 inline-block rounded bg-neutral-100 px-1.5 py-0.5 text-[10px] uppercase text-neutral-500 dark:bg-neutral-800">
+              <p className="font-medium text-neutral-900 dark:text-neutral-100">
+                {modulo.nombre}
+              </p>
+              <p className="text-xs text-neutral-500 dark:text-neutral-400">
+                {modulo.descripcion}
+              </p>
+              <span className="mt-1 inline-block rounded bg-neutral-100 px-1.5 py-0.5 text-[10px] uppercase text-neutral-500 dark:bg-neutral-800 dark:text-neutral-400">
                 {modulo.categoria}
               </span>
             </button>

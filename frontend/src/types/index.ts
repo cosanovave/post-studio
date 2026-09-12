@@ -85,6 +85,7 @@ export interface Proyecto {
   slides: Slide[];
   videoAssetId?: string;
   fondoSeleccionadoId?: string;
+  fondoImagenUrl?: string;
   espaciadoInterno?: "nada" | "compacto" | "normal" | "amplio";
   caption: string;
   hashtags: string[];
