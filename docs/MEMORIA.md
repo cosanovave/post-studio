@@ -1,5 +1,9 @@
 # Memoria del proyecto — Post Studio
 
+## Repositorio
+- https://github.com/cosanovave/post-studio (privado)
+- Identidad git configurada solo localmente en este repo (user.name/user.email), no en global config
+
 ## Estado
 - Nombre: Post Studio
 - Tipo: editor visual web (canvas) para posts de Instagram
