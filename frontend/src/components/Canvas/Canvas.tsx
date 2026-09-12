@@ -48,6 +48,8 @@ export function Canvas() {
           backgroundSize: proyectoActual.fondoImagenUrl ? "cover" : undefined,
           backgroundPosition: proyectoActual.fondoImagenUrl ? "center" : undefined,
           fontFamily: packActivo?.tipografia.texto,
+          color: "#171717",
+          colorScheme: "light",
           padding: paddingCanvas * ESCALA_PREVIEW,
           boxSizing: "border-box",
         }}
