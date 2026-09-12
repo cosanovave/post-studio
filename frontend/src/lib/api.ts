@@ -37,6 +37,19 @@ export async function subirImagenPropia(archivo: File) {
   return data as { id: string; url: string; thumbnailUrl: string; fecha: string };
 }
 
+export async function generarImagenIA(prompt: string) {
+  const respuesta = await fetch(`${API_URL}/api/generar-imagen`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ prompt }),
+  });
+  const data = await respuesta.json();
+  if (!respuesta.ok) {
+    throw new Error(data.error ?? "Error generando la imagen");
+  }
+  return data as { url: string };
+}
+
 export function urlAbsolutaBackend(url: string) {
   return url.startsWith("http") ? url : `${API_URL}${url}`;
 }

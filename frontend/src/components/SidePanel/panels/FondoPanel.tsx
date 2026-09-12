@@ -4,6 +4,7 @@ import { fondosGenerados } from "../../../data/packsEstilo";
 import {
   buscarPexels,
   buscarUnsplash,
+  generarImagenIA,
   subirImagenPropia,
   urlAbsolutaBackend,
   type ResultadoBancoImagen,
@@ -37,6 +38,9 @@ export function FondoPanel() {
   const [buscando, setBuscando] = useState(false);
   const [errorBusqueda, setErrorBusqueda] = useState<string | null>(null);
   const [subiendo, setSubiendo] = useState(false);
+  const [promptIA, setPromptIA] = useState("");
+  const [generandoIA, setGenerandoIA] = useState(false);
+  const [errorIA, setErrorIA] = useState<string | null>(null);
 
   async function handleBuscar() {
     if (!busqueda.trim()) return;
@@ -91,6 +95,20 @@ export function FondoPanel() {
     } finally {
       setSubiendo(false);
       e.target.value = "";
+    }
+  }
+
+  async function handleGenerarIA() {
+    if (!promptIA.trim()) return;
+    setGenerandoIA(true);
+    setErrorIA(null);
+    try {
+      const resultado = await generarImagenIA(promptIA);
+      setFondoImagen(resultado.url);
+    } catch (err) {
+      setErrorIA(err instanceof Error ? err.message : "Error generando la imagen");
+    } finally {
+      setGenerandoIA(false);
     }
   }
 
@@ -207,12 +225,20 @@ export function FondoPanel() {
         </h3>
         <input
           type="text"
+          value={promptIA}
+          onChange={(e) => setPromptIA(e.target.value)}
+          onKeyDown={(e) => e.key === "Enter" && handleGenerarIA()}
           placeholder="Describe la imagen que quieres..."
           className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900"
         />
-        <button className="mt-2 w-full rounded-md bg-neutral-900 py-2 text-xs font-medium text-white dark:bg-white dark:text-neutral-900">
-          Generar imagen (próximamente)
+        <button
+          onClick={handleGenerarIA}
+          disabled={generandoIA}
+          className="mt-2 w-full rounded-md bg-neutral-900 py-2 text-xs font-medium text-white disabled:opacity-50 dark:bg-white dark:text-neutral-900"
+        >
+          {generandoIA ? "Generando..." : "Generar imagen"}
         </button>
+        {errorIA && <p className="mt-1 text-xs text-red-500">{errorIA}</p>}
       </section>
 
       <section>
