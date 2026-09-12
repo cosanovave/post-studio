@@ -1,8 +1,10 @@
 # Memoria del proyecto — Post Studio
 
-## Repositorio
-- https://github.com/cosanovave/post-studio (privado)
+## Repositorio y deploy
+- https://github.com/cosanovave/post-studio (PÚBLICO — se cambió de privado a público para poder usar GitHub Pages gratis)
 - Identidad git configurada solo localmente en este repo (user.name/user.email), no en global config
+- Deploy público del frontend: https://cosanovave.github.io/post-studio/ — vía GitHub Actions (`.github/workflows/deploy-frontend.yml`), se redeploya automático en cada push a `master` que toque `frontend/`
+- IMPORTANTE: al ser repo público, nunca commitear API keys (Unsplash/Pexels/IA) directo en el código — siempre variables de entorno / secrets de GitHub Actions cuando se agregue el backend
 
 ## Estado
 - Nombre: Post Studio
